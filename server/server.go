@@ -68,5 +68,34 @@ func Init() {
 		})
 	})
 
+	router.PATCH("/users/:id", func(c *gin.Context) {
+		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+		var user model.User
+
+		err := c.BindJSON(&user)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "Bad request",
+			})
+			return
+		}
+
+		err = model.UpdateUser(id, user)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "Bad request",
+			})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"message": "User updated",
+			"user":    user,
+		})
+	})
+
 	router.Run("localhost:" + os.Getenv("PORT"))
 }
