@@ -97,5 +97,22 @@ func Init() {
 		})
 	})
 
+	router.DELETE("/users/:id", func(c *gin.Context) {
+		id, _ := strconv.ParseUint(c.Param("id"), 10, 64)
+
+		err := model.DeleteUser(id)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "Bad request",
+			})
+			return
+		}
+
+		c.JSON(http.StatusNoContent, gin.H{
+			"message": "User deleted",
+		})
+	})
+
 	router.Run("localhost:" + os.Getenv("PORT"))
 }
