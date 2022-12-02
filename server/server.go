@@ -41,5 +41,32 @@ func Init() {
 		c.JSON(http.StatusOK, user)
 	})
 
+	router.POST("/users/new", func(c *gin.Context) {
+		var user model.User
+
+		err := c.BindJSON(&user)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "Bad request",
+			})
+			return
+		}
+
+		err = model.CreateUser(user)
+
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"message": "Bad request",
+			})
+			return
+		}
+
+		c.JSON(http.StatusCreated, gin.H{
+			"message": "User created",
+			"user":    user,
+		})
+	})
+
 	router.Run("localhost:" + os.Getenv("PORT"))
 }
